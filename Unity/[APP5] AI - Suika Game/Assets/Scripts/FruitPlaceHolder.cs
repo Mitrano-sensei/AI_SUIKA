@@ -19,6 +19,9 @@ public class FruitPlaceHolder : MonoBehaviour
         });
     }
 
+    /**
+     * Set the sprite of the placeholder
+     */
     public void SetSprite(FruitType fruitType)
     {
         _spriteRenderer.sprite = _sprites[(int)fruitType];

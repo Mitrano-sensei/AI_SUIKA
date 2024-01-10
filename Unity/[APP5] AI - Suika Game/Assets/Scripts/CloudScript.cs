@@ -4,7 +4,7 @@ public class CloudScript : MonoBehaviour
 {
     [SerializeField] private Transform _fruitPosition;
 
-    private GameObject _myFruit;
+    private Fruit _myFruit;
     private GameManager _gameManager;
 
     void Start()
@@ -15,39 +15,46 @@ public class CloudScript : MonoBehaviour
             SetPlaceHolderFruit();
         });
 
-        _gameManager.OnSpawnFruit.AddListener(position =>{
-            ReleasePlaceHolderFruit(position);
-        });
-
         if (_myFruit != null) EnableMyFruit(false);
-    }
-
-    private void EnableMyFruit(bool enable)
-    {
-        if (_myFruit == null) {
-            Debug.LogError("MyFruit is null on CloudScript"); 
-            return;
-        }
-        _myFruit.GetComponent<Rigidbody2D>().simulated = enable;
-        _myFruit.GetComponent<Collider2D>().enabled = enable;
     }
 
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            _gameManager.SpawnFruit(_fruitPosition.position);
+            ReleasePlaceHolderFruit(_fruitPosition.position);
+            _gameManager.RollFruits();
         }
 
         _myFruit.transform.position = _fruitPosition.position;
     }
 
+    /**
+     * Enable or disable the fruit
+     */
+    private void EnableMyFruit(bool enable)
+    {
+        if (_myFruit == null)
+        {
+            Debug.LogError("MyFruit is null on CloudScript");
+            return;
+        }
+        _myFruit.GetComponent<Rigidbody2D>().simulated = enable;
+        _myFruit.GetComponent<Collider2D>().enabled = enable;
+    }
+
+    /*
+     * Set the placeholder fruit (in the hand of the cloud)
+     */
     public void SetPlaceHolderFruit()
     {
         _myFruit = _gameManager.InstantiateCurrentFruit();
         EnableMyFruit(false);
     }
 
+    /*
+     * Release the placeholder fruit so it falls
+     */
     public void ReleasePlaceHolderFruit(Vector3 position)
     {
         var currentPos = transform.position;
