@@ -62,7 +62,6 @@ public class Fruit : MonoBehaviour
 
         if (otherFruit.GetFruitType() == GetFruitType())
         {
-            Debug.Log("Merging !");
             Merge(otherFruit);
         }
     }

@@ -10,7 +10,7 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private CloudScript _cloud;
     [SerializeField] private Transform _lowerPos;
     [SerializeField] private Transform _upperPos;
-    [SerializeField] private Transform _gameEnvironment;
+    [SerializeField] private Transform _fruitsParent;
 
     // CurrentFruit, NextFruit
     public UnityEvent<FruitType, FruitType> OnRollFruit = new();
@@ -42,7 +42,7 @@ public class GameManager : Singleton<GameManager>
             _fruitsPool.Add(fruitComponent.GetFruitType(), 
                 new ObjectPool<Fruit>(
                     () => {
-                            var fruit = Instantiate(fruitComponent, _gameEnvironment);
+                            var fruit = Instantiate(fruitComponent, _fruitsParent);
                             Helper.DelayedAction(0.1f, () => fruit.Merging = false);
                             fruit.LimitYPosition = _lowerPos;
                             fruit.RegisterDestroyAction(fruit => _fruitsPool[fruit.GetFruitType()].Release(fruit));
@@ -50,6 +50,7 @@ public class GameManager : Singleton<GameManager>
                         },
                     fruit => { 
                         fruit.gameObject.SetActive(true);
+                        fruit.transform.rotation = Quaternion.identity;
                         fruit.Merging = false;
                     },
                     fruit => { fruit.gameObject.SetActive(false); },
@@ -74,7 +75,7 @@ public class GameManager : Singleton<GameManager>
     {
         if (_hasLost) return;
 
-        var localMousePos = _gameEnvironment.InverseTransformPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+        var localMousePos = _fruitsParent.InverseTransformPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
         var mouseXPosition = Mathf.Clamp(localMousePos.x, _lowerPos.position.x, _upperPos.position.x);
         _cloud.transform.position = new Vector3( mouseXPosition,
                                                 _cloud.transform.position.y,
@@ -178,7 +179,6 @@ public class GameManager : Singleton<GameManager>
      */
     private Fruit InstantiateFruit(FruitType fruitType)
     {
-        Debug.Log("Instantiating fruit " + fruitType);
         Fruit myFruit = _fruitsPool[fruitType].Get();
         return myFruit;
     }

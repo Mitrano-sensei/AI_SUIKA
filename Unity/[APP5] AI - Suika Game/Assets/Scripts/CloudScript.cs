@@ -18,10 +18,16 @@ public class CloudScript : MonoBehaviour
         if (_myFruit != null) EnableMyFruit(false);
     }
 
+    [SerializeField] private float _timeBetweenFruits = 0.5f;
+    private float _lastTimePlayed = 0f;
+
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
+            if (Time.time - _lastTimePlayed < _timeBetweenFruits) return;
+            _lastTimePlayed = Time.time;
+
             ReleasePlaceHolderFruit(_fruitPosition.position);
             _gameManager.RollFruits();
         }
