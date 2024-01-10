@@ -116,6 +116,40 @@ public class Fruit : MonoBehaviour
         return _fruitType;
     }
 
+    internal int FindChain()
+    {
+        // Search fruits that are colliding with this fruits collider
+        var colliderRadius = _collider.bounds.extents.x;
+        var colliders = Physics2D.OverlapCircleAll(transform.position, colliderRadius + 0.1f);
+
+        var maxChain = 1;
+        foreach (var collider in colliders)
+        {
+            var fruit = collider.GetComponent<Fruit>();
+            if (fruit == null) continue;
+
+            var temp = 1;
+
+            if (fruit.GetFruitType() == GetFruitType() - 1)
+            {
+                temp += fruit.FindChain();
+            }
+
+            if (temp > maxChain) maxChain = temp;
+        }
+
+        return maxChain;
+    }
+
+    internal float FindDistanceToCorner(Transform transform1, Transform transform2)
+    {
+        var radius = _collider.bounds.extents.x;
+        var distanceToCorner1 = Vector2.Distance(transform.position, transform1.position) - radius;
+        var distanceToCorner2 = Vector2.Distance(transform.position, transform2.position) - radius;
+
+        return Mathf.Min(distanceToCorner1, distanceToCorner2);
+    }
+
     public enum FruitType
     {
         Cherry = 0,

@@ -7,6 +7,8 @@ public class CloudScript : MonoBehaviour
     private Fruit _myFruit;
     private GameManager _gameManager;
 
+    public Fruit MyFruit { get => _myFruit; private set => _myFruit = value; }
+
     void Start()
     {
         _gameManager = GameManager.Instance;

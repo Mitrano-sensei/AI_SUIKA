@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Pool;
@@ -11,6 +12,8 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private Transform _lowerPos;
     [SerializeField] private Transform _upperPos;
     [SerializeField] private Transform _fruitsParent;
+
+    [SerializeField] private Transform[] _corners;
 
     // CurrentFruit, NextFruit
     public UnityEvent<FruitType, FruitType> OnRollFruit = new();
@@ -69,6 +72,10 @@ public class GameManager : Singleton<GameManager>
         _nextFruit = (FruitType)Random.Range(0, 3);
 
         RollFruits();
+
+        // Logs the longest chain after every player action
+        OnRollFruit.AddListener((fruit, fruit2) => Debug.Log("Longest Chain : " + FindLongestChain()));
+        OnRollFruit.AddListener((fruit, fruit2) => Debug.Log("Biggest Fruit Distance To Corner : " + FindBiggestFruitDistanceToCorner()));
     }
 
     public void Update()
@@ -80,7 +87,7 @@ public class GameManager : Singleton<GameManager>
         _cloud.transform.position = new Vector3( mouseXPosition,
                                                 _cloud.transform.position.y,
                                                 _cloud.transform.position.z);
-        var percent = (mouseXPosition - _lowerPos.position.x) / (_upperPos.position.x - _lowerPos.position.x);
+        // var percent = (mouseXPosition - _lowerPos.position.x) / (_upperPos.position.x - _lowerPos.position.x);
     }
 
     /**
@@ -192,5 +199,48 @@ public class GameManager : Singleton<GameManager>
         _hasLost = true;
 
         OnLoose.Invoke();
+    }
+
+    public int FindLongestChain()
+    {
+        var fruits = FindObjectsOfType<Fruit>();
+        var longestChain = 1;
+
+        // Select fruits that are not held by cloud
+        var fruitsNotHeld = fruits.Where(fruit => fruit != _cloud.MyFruit);
+
+        // Sort from biggest to smallest fruit type
+        var sortedFruits = fruitsNotHeld.OrderByDescending(fruit => fruit.GetFruitType());
+
+        foreach (var fruit in sortedFruits)
+        {
+            if (fruit.GetFruitType() == FruitType.Cherry) break;
+            if ((int)fruit.GetFruitType() <= longestChain) continue;
+            var chain = fruit.FindChain();
+            if (chain > longestChain) longestChain = chain;
+        }
+
+        return longestChain;
+    }
+
+    public float FindBiggestFruitDistanceToCorner()
+    {
+        var fruits = FindObjectsOfType<Fruit>();
+        var fruitsNotHeld = fruits.Where(fruit => fruit != _cloud.MyFruit);
+        var sortedFruits = fruitsNotHeld.OrderByDescending(fruit => fruit.GetFruitType());
+
+        // Select biggest fruit and every fruit that are the same type as the biggest fruit
+        var biggestFruit = sortedFruits.First();
+        var biggestFruitType = biggestFruit.GetFruitType();
+        var biggestFruits = sortedFruits.Where(fruit => fruit.GetFruitType() == biggestFruitType);
+        
+        var lowestDistance = 10000f;
+
+        foreach (var fruit in biggestFruits)
+        {
+            lowestDistance = Mathf.Min(lowestDistance, fruit.FindDistanceToCorner(_corners[0], _corners[1]));
+        }
+
+        return lowestDistance;
     }
 }
