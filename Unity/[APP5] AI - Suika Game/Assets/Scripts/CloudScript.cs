@@ -23,16 +23,21 @@ public class CloudScript : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !_gameManager.IsAiPlaying)
         {
-            if (Time.time - _lastTimePlayed < _timeBetweenFruits) return;
-            _lastTimePlayed = Time.time;
-
-            ReleasePlaceHolderFruit(_fruitPosition.position);
-            _gameManager.RollFruits();
+            PlayFruit();
         }
 
         _myFruit.transform.position = _fruitPosition.position;
+    }
+
+    public void PlayFruit()
+    {
+        if (Time.time - _lastTimePlayed < _timeBetweenFruits) return;
+        _lastTimePlayed = Time.time;
+
+        ReleasePlaceHolderFruit(_fruitPosition.position);
+        _gameManager.RollFruits();
     }
 
     /**

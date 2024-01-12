@@ -1,11 +1,15 @@
+using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.MLAgents;
+using Unity.MLAgents.Actuators;
+using Unity.MLAgents.Sensors;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Pool;
 using static Fruit;
 
-public class GameManager : MonoBehaviour
+public class GameManager : Agent
 {
     [SerializeField] private GameObject[] _fruits;
     [SerializeField] private CloudScript _cloud;
@@ -61,6 +65,10 @@ public class GameManager : MonoBehaviour
                     10)
                 );
         }
+
+        // Rewards
+        _scoreManager.OnScoreChanged.AddListener((score, addedScore) => { AddReward(addedScore); });
+        OnLoose.AddListener(() => { AddReward(-1000); });
     }
 
     public void Start()
@@ -68,15 +76,17 @@ public class GameManager : MonoBehaviour
         _currentFruit = (FruitType)Random.Range(0, 3);
         _nextFruit = (FruitType)Random.Range(0, 3);
 
-        RollFruits();
+        RollFruits();        
 
         // Logs the longest chain after every player action
-        OnRollFruit.AddListener((fruit, fruit2) => Debug.Log("Longest Chain : " + FindLongestChain()));
-        OnRollFruit.AddListener((fruit, fruit2) => Debug.Log("Biggest Fruit Distance To Corner : " + FindBiggestFruitDistanceToCorner()));
+        // OnRollFruit.AddListener((fruit, fruit2) => Debug.Log("Longest Chain : " + FindLongestChain()));
+        // OnRollFruit.AddListener((fruit, fruit2) => Debug.Log("Biggest Fruit Distance To Corner : " + FindBiggestFruitDistanceToCorner()));
     }
 
+    public bool IsAiPlaying = true;
     public void Update()
     {
+        if (IsAiPlaying) return;
         if (_hasLost) return;
 
         var localMousePos = _fruitsParent.InverseTransformPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
@@ -84,8 +94,85 @@ public class GameManager : MonoBehaviour
         _cloud.transform.position = new Vector3( mouseXPosition,
                                                 _cloud.transform.position.y,
                                                 _cloud.transform.position.z);
-        // var percent = (mouseXPosition - _lowerPos.position.x) / (_upperPos.position.x - _lowerPos.position.x);
     }
+
+    #region AI
+
+    private int _episodeCount = 0;
+    public override void OnEpisodeBegin()
+    {
+        // Clears fruits
+        _fruitsParent.KillChildren();
+
+        // Resets everything
+        _hasLost = false;
+
+        _currentFruit = (FruitType)Random.Range(0, 3);
+        _nextFruit = (FruitType)Random.Range(0, 3);
+
+        _scoreManager.ResetScore();
+
+        RollFruits();
+        MaxStep += 5;
+    }
+
+    public override void CollectObservations(VectorSensor sensor)
+    {
+        // Current fruit
+        sensor.AddObservation((int)_currentFruit);
+
+        // Next fruit
+        sensor.AddObservation((int)_nextFruit);
+        
+        // Position of each fruits
+        foreach (var fruit in _fruitsParent.GetComponentsInChildren<Fruit>())
+        {
+            sensor.AddObservation(fruit.transform.position);
+            sensor.AddObservation((int)(fruit.GetFruitType()));
+        }
+    }
+
+    public override void OnActionReceived(ActionBuffers vectorAction)
+    {
+        if (_hasLost) return;
+
+        var moveOutput = vectorAction.ContinuousActions[0];
+        var percent = (moveOutput + 1f) * .5f;
+
+        var leftCornerX = _corners[0].position.x;
+        var rightCornerX = _corners[1].position.x;
+
+        var nextCloudPosition = leftCornerX + (rightCornerX - leftCornerX) * percent;
+
+        _cloud.transform.position = new Vector3(nextCloudPosition,
+                                                _cloud.transform.position.y,
+                                                _cloud.transform.position.z);
+
+        bool playOutput = vectorAction.DiscreteActions[0] == 1;
+        if (playOutput)
+        {
+            _cloud.PlayFruit();
+        }
+
+        // Rewards 
+        var longestChain = FindLongestChain();
+        var biggestFruitDistanceToCorner = FindBiggestFruitDistanceToCorner();
+
+        AddReward(longestChain * 25);
+        AddReward((50/biggestFruitDistanceToCorner) - 10);
+    }
+
+    public override void Heuristic(in ActionBuffers actionsOut)
+    {
+        var continuousActionsOut = actionsOut.ContinuousActions;
+        var discreteActionsOut = actionsOut.DiscreteActions;
+
+        continuousActionsOut[0] = Input.GetAxis("Horizontal");
+
+        discreteActionsOut[0] = Input.GetMouseButtonDown(0) ? 1 : 0;
+    }
+
+    #endregion
 
     /**
      * At the given position, spawns the fruit that would be spawned if a fruit of type fruitType is merged.
@@ -192,7 +279,7 @@ public class GameManager : MonoBehaviour
      */
     internal void Loose()
     {
-        Debug.Log("Lost");
+        Debug.Log("Game " + gameObject.name + " has Lost");
         _hasLost = true;
 
         OnLoose.Invoke();
@@ -200,7 +287,7 @@ public class GameManager : MonoBehaviour
 
     public int FindLongestChain()
     {
-        var fruits = FindObjectsOfType<Fruit>();
+        var fruits = _fruitsParent.GetComponentsInChildren<Fruit>();
         var longestChain = 1;
 
         // Select fruits that are not held by cloud
@@ -222,7 +309,7 @@ public class GameManager : MonoBehaviour
 
     public float FindBiggestFruitDistanceToCorner()
     {
-        var fruits = FindObjectsOfType<Fruit>();
+        var fruits = _fruitsParent.GetComponentsInChildren<Fruit>();
         var fruitsNotHeld = fruits.Where(fruit => fruit != _cloud.MyFruit);
         var sortedFruits = fruitsNotHeld.OrderByDescending(fruit => fruit.GetFruitType());
 

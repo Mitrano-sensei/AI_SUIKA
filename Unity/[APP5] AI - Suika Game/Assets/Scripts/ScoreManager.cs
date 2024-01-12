@@ -5,15 +5,15 @@ using UnityEngine.Events;
 public class ScoreManager : MonoBehaviour
 {
     private int _score = 0;
-    public UnityEvent<int> OnScoreChanged = new();
+    public UnityEvent<int, int> OnScoreChanged = new();
     [SerializeField] private TextMeshProUGUI _scoreText;
 
     public void Start()
     {
         _score = 0;
-        OnScoreChanged.AddListener((score) => _scoreText.text = score.ToString());
+        OnScoreChanged.AddListener((score, addedScore) => _scoreText.text = score.ToString());
 
-        OnScoreChanged.Invoke(0);
+        OnScoreChanged.Invoke(0, 0);
     }
 
     /**
@@ -22,7 +22,13 @@ public class ScoreManager : MonoBehaviour
     public void AddScore(int score)
     {
         _score += score;
-        OnScoreChanged.Invoke(_score);
+        OnScoreChanged.Invoke(_score, score);
+    }
+
+    public void ResetScore()
+    {
+        _score = 0;
+        OnScoreChanged.Invoke(0, 0);
     }
 
 }
