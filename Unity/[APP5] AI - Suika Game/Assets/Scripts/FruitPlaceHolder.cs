@@ -7,13 +7,14 @@ public class FruitPlaceHolder : MonoBehaviour
 {
     private SpriteRenderer _spriteRenderer;
     [SerializeField] private Sprite[] _sprites;
+    [SerializeField] private GameManager _gameManager;
 
     void Start()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
         if (_spriteRenderer == null ) Debug.LogError("SpriteRenderer is null on PlaceHolder");
 
-        GameManager.Instance.OnRollFruit.AddListener((fruit, fruit2) =>
+        _gameManager.OnRollFruit.AddListener((fruit, fruit2) =>
         {
             SetSprite(fruit2);
         });

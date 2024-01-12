@@ -5,7 +5,7 @@ using UnityEngine.Events;
 using UnityEngine.Pool;
 using static Fruit;
 
-public class GameManager : Singleton<GameManager>
+public class GameManager : MonoBehaviour
 {
     [SerializeField] private GameObject[] _fruits;
     [SerializeField] private CloudScript _cloud;
@@ -24,16 +24,14 @@ public class GameManager : Singleton<GameManager>
     private FruitType _nextFruit;
 
     private bool _hasLost = false;
-    private ScoreManager _scoreManager;
+    [SerializeField] private ScoreManager _scoreManager;
 
     private Dictionary<FruitType, ObjectPool<Fruit>> _fruitsPool;
 
     public bool HasLost { get => _hasLost; private set => _hasLost = value; }
 
-    protected override void Awake()
+    protected void Awake()
     {
-        base.Awake();
-
         // Init Object Pool
         _fruitsPool = new();
 
@@ -49,6 +47,7 @@ public class GameManager : Singleton<GameManager>
                             Helper.DelayedAction(0.1f, () => fruit.Merging = false);
                             fruit.LimitYPosition = _lowerPos;
                             fruit.RegisterDestroyAction(fruit => _fruitsPool[fruit.GetFruitType()].Release(fruit));
+                            fruit.GameManager = this;
                             return fruit;
                         },
                     fruit => { 
@@ -66,8 +65,6 @@ public class GameManager : Singleton<GameManager>
 
     public void Start()
     {
-        _scoreManager = ScoreManager.Instance;
-
         _currentFruit = (FruitType)Random.Range(0, 3);
         _nextFruit = (FruitType)Random.Range(0, 3);
 

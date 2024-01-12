@@ -8,7 +8,7 @@ public class Fruit : MonoBehaviour
     [SerializeField] private FruitType _fruitType;
     public Transform LimitYPosition;
 
-    private GameManager _gameManager;
+    public GameManager GameManager;
 
     public void Awake()
     {
@@ -17,9 +17,8 @@ public class Fruit : MonoBehaviour
 
     public void Start()
     {
-        _gameManager = GameManager.Instance;
 
-        _gameManager.OnLoose.AddListener(() =>
+        GameManager.OnLoose.AddListener(() =>
         {
             GetComponent<Rigidbody2D>().simulated = false;
             _collider.enabled = false;
@@ -38,7 +37,7 @@ public class Fruit : MonoBehaviour
      */
     private void CheckLoose()
     {
-        if (_gameManager.HasLost) return;
+        if (GameManager.HasLost) return;
 
         bool isTooHigh = transform.position.y > LimitYPosition.position.y;
         if (isTooHigh)
@@ -46,7 +45,7 @@ public class Fruit : MonoBehaviour
             _looseTime += Time.deltaTime;
             if (_looseTime > 1f)
             {
-                _gameManager.Loose();
+                GameManager.Loose();
             }
         }
         else
@@ -87,7 +86,7 @@ public class Fruit : MonoBehaviour
         otherFruit.CallDestroyAction();
 
         var averagePosition = (transform.position + otherFruit.transform.position) / 2f;
-        _gameManager.SpawnMergedFruitFrom(averagePosition, GetFruitType());
+        GameManager.SpawnMergedFruitFrom(averagePosition, GetFruitType());
 
         CallDestroyAction();
     }

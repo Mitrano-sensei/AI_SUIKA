@@ -5,14 +5,12 @@ public class CloudScript : MonoBehaviour
     [SerializeField] private Transform _fruitPosition;
 
     private Fruit _myFruit;
-    private GameManager _gameManager;
+    [SerializeField] private GameManager _gameManager;
 
     public Fruit MyFruit { get => _myFruit; private set => _myFruit = value; }
 
     void Start()
-    {
-        _gameManager = GameManager.Instance;
-        
+    {        
         _gameManager.OnRollFruit.AddListener((fruit, fruit2) => {
             SetPlaceHolderFruit();
         });
