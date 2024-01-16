@@ -14,7 +14,7 @@ public static class Helper
     {
         foreach (Transform child in parent)
         {
-            GameObject.Destroy(child.gameObject);
+            child.gameObject.GetComponent<Fruit>()?.CallDestroyAction();
         }
     }   
 }

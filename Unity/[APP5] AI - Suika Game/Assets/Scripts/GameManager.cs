@@ -9,6 +9,7 @@ using UnityEngine.Events;
 using UnityEngine.Pool;
 using static Fruit;
 
+[RequireComponent(typeof(DecisionRequester))]
 public class GameManager : Agent
 {
     [SerializeField] private GameObject[] _fruits;
@@ -56,6 +57,8 @@ public class GameManager : Agent
                         },
                     fruit => { 
                         fruit.gameObject.SetActive(true);
+                        fruit.gameObject.GetComponent<Collider2D>().enabled = true;
+                        fruit.gameObject.GetComponent<Rigidbody2D>().simulated = true;
                         fruit.transform.rotation = Quaternion.identity;
                         fruit.Merging = false;
                     },
@@ -69,6 +72,7 @@ public class GameManager : Agent
         // Rewards
         _scoreManager.OnScoreChanged.AddListener((score, addedScore) => { AddReward(addedScore); });
         OnLoose.AddListener(() => { AddReward(-1000); });
+        OnLoose.AddListener(() => { EndEpisode(); });
     }
 
     public void Start()
@@ -113,7 +117,9 @@ public class GameManager : Agent
         _scoreManager.ResetScore();
 
         RollFruits();
-        MaxStep += 5;
+        _episodeCount++;
+        Debug.Log("Episode : " + _episodeCount);
+        MaxStep += 500;
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -134,6 +140,7 @@ public class GameManager : Agent
 
     public override void OnActionReceived(ActionBuffers vectorAction)
     {
+        // Debug.Log(vectorAction.ContinuousActions[0]);
         if (_hasLost) return;
 
         var moveOutput = vectorAction.ContinuousActions[0];
@@ -153,6 +160,7 @@ public class GameManager : Agent
         {
             _cloud.PlayFruit();
         }
+        else Debug.Log("Not playing");
 
         // Rewards 
         var longestChain = FindLongestChain();
@@ -314,6 +322,8 @@ public class GameManager : Agent
         var sortedFruits = fruitsNotHeld.OrderByDescending(fruit => fruit.GetFruitType());
 
         // Select biggest fruit and every fruit that are the same type as the biggest fruit
+        if (sortedFruits.Any()) return 5;
+
         var biggestFruit = sortedFruits.First();
         var biggestFruitType = biggestFruit.GetFruitType();
         var biggestFruits = sortedFruits.Where(fruit => fruit.GetFruitType() == biggestFruitType);
