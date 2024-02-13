@@ -33,8 +33,11 @@ public class CloudScript : MonoBehaviour
 
     public void PlayFruit()
     {
-        if (Time.time - _lastTimePlayed < _timeBetweenFruits) return;
-        _lastTimePlayed = Time.time;
+        if (!_gameManager.IsAiPlaying)
+        {
+            if (Time.time - _lastTimePlayed < _timeBetweenFruits) return;
+            _lastTimePlayed = Time.time;
+        }
 
         ReleasePlaceHolderFruit(_fruitPosition.position);
         _gameManager.RollFruits();

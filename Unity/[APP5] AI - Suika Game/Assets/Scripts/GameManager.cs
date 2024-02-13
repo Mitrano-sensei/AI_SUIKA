@@ -71,8 +71,7 @@ public class GameManager : Agent
 
         // Rewards
         _scoreManager.OnScoreChanged.AddListener((score, addedScore) => { AddReward(addedScore); });
-        OnLoose.AddListener(() => { AddReward(-1000); });
-        OnLoose.AddListener(() => { EndEpisode(); });
+        OnLoose.AddListener(() => { AddReward(-1000); EndEpisode(); });
     }
 
     public void Start()
