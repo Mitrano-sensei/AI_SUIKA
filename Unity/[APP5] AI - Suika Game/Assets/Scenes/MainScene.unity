@@ -134,6 +134,10 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 519420031}
+    - target: {fileID: 2279674509303159364, guid: 6454baa181288c644b0e08b1b999c94e, type: 3}
+      propertyPath: DecisionPeriod
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 2279674509303159365, guid: 6454baa181288c644b0e08b1b999c94e, type: 3}
       propertyPath: m_BehaviorName
       value: Nuage 4
@@ -334,6 +338,10 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 519420031}
+    - target: {fileID: 2279674509303159364, guid: 6454baa181288c644b0e08b1b999c94e, type: 3}
+      propertyPath: DecisionPeriod
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 2279674509303159365, guid: 6454baa181288c644b0e08b1b999c94e, type: 3}
       propertyPath: m_BehaviorName
       value: Nuage 2
@@ -660,6 +668,10 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 519420031}
+    - target: {fileID: 2279674509303159364, guid: 6454baa181288c644b0e08b1b999c94e, type: 3}
+      propertyPath: DecisionPeriod
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 2279674509303159365, guid: 6454baa181288c644b0e08b1b999c94e, type: 3}
       propertyPath: m_BehaviorName
       value: Nuage 3
