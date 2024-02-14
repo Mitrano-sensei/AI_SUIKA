@@ -1,0 +1,65 @@
+Optimisé pour avoir le meilleur score => but de l'IA
+
+
+Listes des fruits: 
+
+Cherry,
+Strawberry,
+Grapes,
+Dekopon,
+Persimmon,
+Apple,
+Pear,
+Peach,
+Pineapple,
+Honeydew,
+Watermelon
+
+
+
+Point=Level+Previous
+Previous(n)=Point(n-1)
+
+Name	Points	Level	Previous
+Cherry     1	  1	        0
+Strawberry	3	2	1
+Grapes	6	3	3
+Dekopon	10	4	6
+Persimmon	15	5	10
+Apple	21	6	15
+Pear	28	7	21
+Peach	36	8	28
+Pineapple	45	9	36
+Melon	55	10	45
+Watermelon	66	11	55
+
+
+
+
+genetic algorithm (algorithmes génétiques)
+
+Population: Les fruits dans le bocal
+
+On évalue les fruits du bocal pour voir où est le meilleur endroit pour déposer notre fruit
+
+Si plusieurs endroits permette une fusion, choisir celui ou il ya le plus de fusion en chaine.
+
+Meilleur score si le + gros fruit est dans un coin et que les fruits sont connectés en chaines dans l'ordre de création
+
+
+
+Concevoir un jeu de données => faire jouer le jeu en automatique et recupérer les scores/ Dire ce qui est bien ou pas 
+Comment je sais pas
+
+
+
+Avoir des datas
+Clean et prepare data
+Train model
+Validate (retour à clean si nécessaire)
+Déployer l'IA
+
+
+C'est quoi nos param d'entrées et de sorties ? 
+verification data ?
+critère de succès ? 
