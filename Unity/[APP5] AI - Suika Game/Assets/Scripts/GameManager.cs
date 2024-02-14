@@ -132,7 +132,7 @@ public class GameManager : Agent
         // Position of each fruits
         foreach (var fruit in _fruitsParent.GetComponentsInChildren<Fruit>())
         {
-            sensor.AddObservation(fruit.transform.position);
+            sensor.AddObservation(fruit.transform.localPosition);
             sensor.AddObservation((int)(fruit.GetFruitType()));
         }
     }
