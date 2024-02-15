@@ -104,9 +104,11 @@ public class GameManager : Agent
     private int _episodeCount = 0;
     [Header("AI Steps")]
     [Tooltip("The first max step of the AI")]
-    [SerializeField] private int _firstMaxStep = 20;
+    [SerializeField] private int _firstMaxStep = 50;
     [Tooltip("The max step growth of the AI (added to previous max step at each episode)")]
     [SerializeField] private int _maxStepGrowth = 20;
+    [Tooltip("Augmente le nombre de step tous les _nextIncrease episodes")]
+    [SerializeField] private int _nextIncrease = 5;
 
     public override void OnEpisodeBegin()
     {
@@ -127,7 +129,10 @@ public class GameManager : Agent
         RollFruits();
         _episodeCount++;
         Debug.Log("Episode : " + _episodeCount);
-        MaxStep += _maxStepGrowth;
+        if(_episodeCount%_nextIncrease==0){
+            MaxStep += _maxStepGrowth;
+        }
+        
     }
 
     public override void CollectObservations(VectorSensor sensor)
