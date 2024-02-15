@@ -1,7 +1,7 @@
 [NEAT]
 fitness_criterion     = max
-fitness_threshold     = 5000
-pop_size              = 10
+fitness_threshold     = 50000
+pop_size              = 4
 reset_on_extinction   = False
 
 [DefaultGenome]
@@ -13,8 +13,7 @@ activation_options      = sigmoid
 # network parameters
 num_hidden              = 0
 
-#The num of inputs is variable => 3*(the number of fruits in the jar +1)+1
-num_inputs              = 304
+num_inputs              = 202
 num_outputs             = 2
 
 # node aggregation options
