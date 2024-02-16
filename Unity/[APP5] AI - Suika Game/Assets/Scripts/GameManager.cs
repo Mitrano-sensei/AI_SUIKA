@@ -37,7 +37,7 @@ public class GameManager : Agent
 
     protected void Awake()
     {
-        // Init Object Pool
+        //Init Object Pool
         _fruitsPool = new();
 
         foreach (var fruit in _fruits)
@@ -65,7 +65,8 @@ public class GameManager : Agent
                     fruit => { fruit.gameObject.SetActive(false); },
                     fruit => Destroy(fruit.gameObject),
                     false,
-                    10)
+                    10,
+                    6000)
                 );
         }
 
@@ -76,6 +77,9 @@ public class GameManager : Agent
 
     public void Start()
     {
+        
+
+
         _currentFruit = (FruitType)Random.Range(0, 3);
         _nextFruit = (FruitType)Random.Range(0, 3);
 
@@ -104,14 +108,47 @@ public class GameManager : Agent
     private int _episodeCount = 0;
     [Header("AI Steps")]
     [Tooltip("The first max step of the AI")]
-    [SerializeField] private int _firstMaxStep = 50;
+    [SerializeField] private int _firstMaxStep = 500;
     [Tooltip("The max step growth of the AI (added to previous max step at each episode)")]
-    [SerializeField] private int _maxStepGrowth = 20;
+    [SerializeField] private int _maxStepGrowth = 50;
     [Tooltip("Augmente le nombre de step tous les _nextIncrease episodes")]
     [SerializeField] private int _nextIncrease = 5;
 
     public override void OnEpisodeBegin()
     {
+
+        _fruitsPool = new();
+
+        foreach (var fruit in _fruits)
+        {
+            var fruitComponent = fruit.GetComponent<Fruit>();
+            if (fruitComponent == null) Debug.LogError("Fruit component is null on " + fruit.name);
+
+            _fruitsPool.Add(fruitComponent.GetFruitType(), 
+                new ObjectPool<Fruit>(
+                    () => {
+                            var fruit = Instantiate(fruitComponent, _fruitsParent);
+                            Helper.DelayedAction(0.1f, () => fruit.Merging = false);
+                            fruit.LimitYPosition = _lowerPos;
+                            fruit.RegisterDestroyAction(fruit => _fruitsPool[fruit.GetFruitType()].Release(fruit));
+                            fruit.GameManager = this;
+                            return fruit;
+                        },
+                    fruit => { 
+                        fruit.gameObject.SetActive(true);
+                        fruit.gameObject.GetComponent<Collider2D>().enabled = true;
+                        fruit.gameObject.GetComponent<Rigidbody2D>().simulated = true;
+                        fruit.transform.rotation = Quaternion.identity;
+                        fruit.Merging = false;
+                    },
+                    fruit => { fruit.gameObject.SetActive(false); },
+                    fruit => Destroy(fruit.gameObject),
+                    false,
+                    10,
+                    6000)
+                );
+        }
+        
         if (_episodeCount == 0)
             MaxStep = _firstMaxStep;
 
@@ -173,7 +210,10 @@ public class GameManager : Agent
         {
             _cloud.PlayFruit();
         }
-        else Debug.Log("Not playing");
+        else{
+            Debug.Log("Not playing");
+            AddReward(-1);
+        }
 
         // Rewards 
         var longestChain = FindLongestChain();

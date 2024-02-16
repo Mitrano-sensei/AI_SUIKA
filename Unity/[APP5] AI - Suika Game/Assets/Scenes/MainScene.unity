@@ -142,6 +142,18 @@ PrefabInstance:
       propertyPath: m_BehaviorName
       value: Nuage 4
       objectReference: {fileID: 0}
+    - target: {fileID: 2279674509303159419, guid: 6454baa181288c644b0e08b1b999c94e, type: 3}
+      propertyPath: MaxStep
+      value: 1000000
+      objectReference: {fileID: 0}
+    - target: {fileID: 2279674509303159419, guid: 6454baa181288c644b0e08b1b999c94e, type: 3}
+      propertyPath: _firstMaxStep
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 2279674509303159419, guid: 6454baa181288c644b0e08b1b999c94e, type: 3}
+      propertyPath: _maxStepGrowth
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 2279674509511609874, guid: 6454baa181288c644b0e08b1b999c94e, type: 3}
       propertyPath: m_fontSize
       value: 20
@@ -345,6 +357,18 @@ PrefabInstance:
     - target: {fileID: 2279674509303159365, guid: 6454baa181288c644b0e08b1b999c94e, type: 3}
       propertyPath: m_BehaviorName
       value: Nuage 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2279674509303159419, guid: 6454baa181288c644b0e08b1b999c94e, type: 3}
+      propertyPath: MaxStep
+      value: 1000000
+      objectReference: {fileID: 0}
+    - target: {fileID: 2279674509303159419, guid: 6454baa181288c644b0e08b1b999c94e, type: 3}
+      propertyPath: _firstMaxStep
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 2279674509303159419, guid: 6454baa181288c644b0e08b1b999c94e, type: 3}
+      propertyPath: _maxStepGrowth
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 2279674509511609874, guid: 6454baa181288c644b0e08b1b999c94e, type: 3}
       propertyPath: m_fontSize
@@ -677,6 +701,18 @@ PrefabInstance:
       value: Nuage 3
       objectReference: {fileID: 0}
     - target: {fileID: 2279674509303159419, guid: 6454baa181288c644b0e08b1b999c94e, type: 3}
+      propertyPath: MaxStep
+      value: 1000000
+      objectReference: {fileID: 0}
+    - target: {fileID: 2279674509303159419, guid: 6454baa181288c644b0e08b1b999c94e, type: 3}
+      propertyPath: _firstMaxStep
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 2279674509303159419, guid: 6454baa181288c644b0e08b1b999c94e, type: 3}
+      propertyPath: _maxStepGrowth
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 2279674509303159419, guid: 6454baa181288c644b0e08b1b999c94e, type: 3}
       propertyPath: OnMerge.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1397264846}
@@ -784,6 +820,18 @@ PrefabInstance:
     - target: {fileID: 2279674509303159365, guid: 6454baa181288c644b0e08b1b999c94e, type: 3}
       propertyPath: m_BehaviorName
       value: Nuage 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2279674509303159419, guid: 6454baa181288c644b0e08b1b999c94e, type: 3}
+      propertyPath: MaxStep
+      value: 1000000
+      objectReference: {fileID: 0}
+    - target: {fileID: 2279674509303159419, guid: 6454baa181288c644b0e08b1b999c94e, type: 3}
+      propertyPath: _firstMaxStep
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 2279674509303159419, guid: 6454baa181288c644b0e08b1b999c94e, type: 3}
+      propertyPath: _maxStepGrowth
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 2279674509303159419, guid: 6454baa181288c644b0e08b1b999c94e, type: 3}
       propertyPath: OnMerge.m_PersistentCalls.m_Calls.Array.data[0].m_Target
